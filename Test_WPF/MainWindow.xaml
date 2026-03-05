@@ -1,0 +1,55 @@
+﻿<Window x:Class="Marketplace.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Marketplace" Height="720" Width="1200">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <TextBlock VerticalAlignment="Center" Text="Id продавца:" Margin="0,0,6,0"/>
+            <TextBox Width="70" Text="{Binding SellerIdText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,12,0"/>
+            <TextBlock VerticalAlignment="Center" Text="Id пользователя:" Margin="0,0,6,0"/>
+            <TextBox Width="70" Text="{Binding UserIdText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,12,0"/>
+            <TextBlock VerticalAlignment="Center" Text="Id категории:" Margin="0,0,6,0"/>
+            <TextBox Width="70" Text="{Binding CategoryIdText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,12,0"/>
+            <TextBlock VerticalAlignment="Center" Text="Поиск:" Margin="0,0,6,0"/>
+            <TextBox Width="180" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+
+        <WrapPanel Grid.Row="1" Margin="0,0,0,8">
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Товары" Command="{Binding LoadProductsCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Категории" Command="{Binding LoadCategoriesCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Акции" Command="{Binding LoadPromotionsCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Избранное" Command="{Binding LoadFavoritesCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Логи пользователей" Command="{Binding LoadLogsCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Активные товары (view)" Command="{Binding LoadActiveProductsViewCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Популярные (view)" Command="{Binding LoadPopularProductsViewCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Дашборд продавца (SP)" Command="{Binding LoadSellerDashboardCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Тест триггера цены" Command="{Binding TestPriceTriggerCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Тест триггера остатков" Command="{Binding TestStockTriggerCommand}"/>
+            <Button Margin="0,0,8,8" Padding="12,6" Content="Создать базу данных" Command="{Binding CreateDatabaseCommand}"/>
+        </WrapPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="Результаты" Margin="0,0,8,0">
+                <DataGrid ItemsSource="{Binding Rows}" AutoGenerateColumns="True" IsReadOnly="True"/>
+            </GroupBox>
+
+            <GroupBox Header="Лог" Grid.Column="1">
+                <TextBox Text="{Binding LogText}" IsReadOnly="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="Wrap"/>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</Window>
