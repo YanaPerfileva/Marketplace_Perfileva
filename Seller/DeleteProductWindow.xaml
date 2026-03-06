@@ -1,0 +1,44 @@
+﻿<Window x:Class="Seller.DeleteProductWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Seller"
+        mc:Ignorable="d"
+        Title="DeleteProductWindow" Height="450" Width="800">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Выберите товар для удаления" 
+                   FontSize="22" FontWeight="Bold" Margin="0,0,0,20" 
+                   HorizontalAlignment="Center" Foreground="#DC3545"/>
+
+        <ListView x:Name="ProductsListView" Grid.Row="1" Height="300" 
+                  SelectionMode="Single" Margin="0,0,0,20">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#F8F9FA" Margin="0,2" Padding="15" CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16"/>
+                            <TextBlock Text="{Binding Brand}" Foreground="Gray" Margin="0,2"/>
+                            <TextBlock Text="{Binding Skus.Count, StringFormat='SKU: {0}'}" 
+                                       Foreground="#007BFF" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="DeleteButton" Content="Удалить" Width="120" Height="40" 
+                    Margin="0,0,10,0" Click="DeleteButton_Click" 
+                    Background="#DC3545" Foreground="White"/>
+            <Button x:Name="CancelButton" Content="Отмена" Width="100" Height="40" 
+                    Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

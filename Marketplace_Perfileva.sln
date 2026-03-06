@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marketplace.Data", "Marketp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_WPF", "Test_WPF\Test_WPF.csproj", "{582BAFB4-FDC0-4F9F-89CE-E77B965646A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seller", "Seller\Seller.csproj", "{FB713A0A-697D-4DCC-A143-65991BE04D10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{582BAFB4-FDC0-4F9F-89CE-E77B965646A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{582BAFB4-FDC0-4F9F-89CE-E77B965646A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{582BAFB4-FDC0-4F9F-89CE-E77B965646A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB713A0A-697D-4DCC-A143-65991BE04D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB713A0A-697D-4DCC-A143-65991BE04D10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB713A0A-697D-4DCC-A143-65991BE04D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB713A0A-697D-4DCC-A143-65991BE04D10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

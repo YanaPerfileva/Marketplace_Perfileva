@@ -231,22 +231,27 @@ namespace Marketplace.DAL.Repositories
         }
 
         // ИЗМЕНЕНИЕ ТОВАРА
-        public async Task UpdateProductAsync(int productId, int sellerId, string name, string? brand,
-            string? description, decimal basePrice, string? mainImageUrl)
+        public async Task<bool> UpdateProductAsync(int productId, int sellerId, string name,
+            string? brand, string? description, decimal basePrice, int categoryId, string? mainImageUrl)
         {
             var product = await _context.Products
+                .Include(p => p.Skus) // ✅ Загружаем SKU!
                 .FirstOrDefaultAsync(p => p.Id == productId && p.SellerId == sellerId);
 
-            if (product == null) return;
+            if (product == null)
+                return false; // ✅ Возвращаем false
 
             product.Name = name;
             product.Brand = brand;
             product.Description = description;
             product.BasePrice = basePrice;
+            product.CategoryId = categoryId;  // ✅ Обязательное!
             product.MainImageUrl = mainImageUrl;
             product.UpdatedAt = DateTime.UtcNow;
+            product.IsActive = true;          // ✅ Безопасность
 
             await _context.SaveChangesAsync();
+            return true; // ✅ Успех!
         }
 
         // ДОБАВИТЬ ФОТО к товару

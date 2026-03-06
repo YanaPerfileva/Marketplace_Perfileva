@@ -1,0 +1,88 @@
+﻿<Window x:Class="Seller.EditSkuWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Seller"
+        mc:Ignorable="d"
+        Title="EditSkuWindow" Height="600" Width="800">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="SKU выбранного товара" FontSize="24" FontWeight="Bold" 
+                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <DataGrid x:Name="SkusDataGrid" Grid.Row="1" Height="200" Margin="0,0,0,10"
+          AutoGenerateColumns="True" 
+          IsReadOnly="True" 
+          SelectionMode="Single"
+          SelectionChanged="SkusDataGrid_SelectionChanged"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,20">
+            <Button x:Name="AddSkuButton" Content="Добавить SKU" Width="120" Height="35" 
+                    Click="AddSkuButton_Click" Background="#28A745" Foreground="White"/>
+            <Button x:Name="DeleteSkuButton" Content="Удалить SKU" Width="120" Height="35" 
+                    Margin="10,0,0,0" Click="DeleteSkuButton_Click" Background="#DC3545" Foreground="White"/>
+        </StackPanel>
+        <GroupBox Grid.Row="3" Header="Варианты товара(SKU)" Margin="0,0,0,20" Padding="15">
+            <Grid Height="113" Margin="0,0,-9,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,10,10">
+                        <TextBlock Text="Размер:*" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                        <TextBox x:Name="SkuSizeTextBox" Height="35" Text="" FontSize="14"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="0,0,10,10">
+                        <TextBlock Text="Цвет:*" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                        <TextBox x:Name="SkuColorTextBox" Height="35" Text="" FontSize="14"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Margin="0,0,0,10">
+                        <TextBlock Text="HEX код цвета" Margin="0,0,0,5"/>
+                        <TextBox x:Name="SkuColorHexTextBox" Height="35" Text="#" FontSize="14"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,0,10">
+                        <TextBlock Text="Цена SKU:*" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                        <TextBox x:Name="SkuPriceTextBox" Height="35" Text="" FontSize="14"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="0,0,0,10">
+                        <TextBlock Text="Остаток:*" Margin="0,0,0,5" FontWeight="SemiBold"/>
+                        <TextBox x:Name="SkuStockTextBox" Height="35" Text="" FontSize="14"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="SaveButton" Content="Сохранить SKU" Width="140" Height="45" 
+                    Click="SaveButton_Click" Background="#28A745" Foreground="White"/>
+            <Button x:Name="CancelButton" Content="Закрыть" Width="120" Height="45" 
+                    Margin="10,0,0,0" Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
