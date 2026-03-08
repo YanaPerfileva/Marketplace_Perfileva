@@ -1,0 +1,114 @@
+﻿<Window x:Class="User.MainWindow"
+        x:Name="Root" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:User"
+        mc:Ignorable="d"
+        MinWidth="1500"
+        Background="LightBlue"
+        Title="Marketplace Dashboard" Height="600" Width="1000">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Margin="10" Background="#F0F2F5">
+            <Button x:Name="AuthButton" Content="Войти" Width="180" Click="Auth_Click" DockPanel.Dock="Right" Margin="10,5" Height="30"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10" Background="#F0F2F5">
+                <Button x:Name="ProductsButton" Content="Товары" Width="100" Click="LoadProducts_Click" Margin="10,5"/>
+                <Button x:Name="LoadButton" Content="Заказы" Width="100" Click="LoadOrders_Click" Margin="10,5"/>
+                <Button x:Name="ReviewButton" Content="Отзывы" Width="100" Click="LoadReviews_Click" Margin="10,5"/>
+                <Button x:Name="FavoritesButton" Content="Избранное" Width="100" Click="LoadFavorites_Click" Margin="10,5"/>
+                <Button x:Name="CartsButton" Content="Корзина" Width="100" Click="LoadCarts_Click" Margin="10,5"/>
+            </StackPanel>
+        </DockPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- КАРТОЧКА МАГАЗИНА (Слева) -->
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <GroupBox Header="Все магазины" Margin="15" Padding="5" Background="#F0F2F5" FontSize="14">
+                    <!-- ListBox для отображения списка -->
+                    <ListBox x:Name="SellersList" 
+         ItemsSource="{Binding AllSellers}" 
+         Background="Transparent" 
+         BorderThickness="0"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <!-- Убираем стандартную синюю рамку выбора и делаем ее мягкой -->
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="5,2"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Bd" CornerRadius="8" Background="White" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#F0F7FF"/>
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#2196F3"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#E3F2FD"/>
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#2196F3"/>
+                                                    <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Логотип с обводкой -->
+                                    <Border Grid.Column="0" CornerRadius="5" Background="White" BorderBrush="#EEE" BorderThickness="1" ClipToBounds="True" Height="45" Width="45">
+                                        <Image Source="{Binding LogoUrl, TargetNullValue='/Resources/no-logo.png'}" Stretch="UniformToFill"/>
+                                    </Border>
+                                    <!-- Инфо -->
+                                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding StoreName}" FontWeight="Bold" FontSize="14" Foreground="#2C3E50"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="⭐" FontSize="10" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                                            <TextBlock Text="{Binding Rating, StringFormat={}{0:F1}}" FontSize="12" FontWeight="SemiBold" Foreground="#F39C12"/>
+                                            <TextBlock Text="{Binding TotalSales, StringFormat='({0} продаж)'}" FontSize="11" Foreground="Gray" Margin="5,0,0,0"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <!-- Маркер верификации (галочка) -->
+                                    <TextBlock Grid.Column="2" Text="✔" Foreground="#4CAF50" FontWeight="Bold" Visibility="{Binding Verified, Converter={StaticResource BoolToVis}}" VerticalAlignment="Top" Margin="5,0,0,0" ToolTip="Подтвержденный продавец"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </GroupBox>
+            </ScrollViewer>
+            <Frame x:Name="MainFrame" Grid.Column="1" NavigationUIVisibility="Hidden"/>
+        </Grid>
+        <StatusBar Grid.Row="2" Background="#2C3E50" Padding="5,4">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <!-- Индикатор загрузки -->
+                    <Ellipse Width="10" Height="10" Margin="5,0" Fill="White" Visibility="{Binding IsLoading, ElementName=Root}"/>
+                    <!-- Текст сообщения -->
+                    <TextBlock Text="{Binding StatusMessage, ElementName=Root}" Foreground="White" FontWeight="SemiBold"/>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

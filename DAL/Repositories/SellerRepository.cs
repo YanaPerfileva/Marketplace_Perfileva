@@ -192,6 +192,7 @@ namespace Marketplace.DAL.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
         //Добавила
         // СОЗДАНИЕ ТОВАРА + SKU + ГЛАВНОЕ ФОТО
         public async Task<int> AddProductWithSkuAsync(int sellerId, int categoryId, string name, string brand,
@@ -245,13 +246,13 @@ namespace Marketplace.DAL.Repositories
             product.Brand = brand;
             product.Description = description;
             product.BasePrice = basePrice;
-            product.CategoryId = categoryId;  // ✅ Обязательное!
+            product.CategoryId = categoryId;  // Обязательное!
             product.MainImageUrl = mainImageUrl;
             product.UpdatedAt = DateTime.UtcNow;
-            product.IsActive = true;          // ✅ Безопасность
+            product.IsActive = true;          // Безопасность
 
             await _context.SaveChangesAsync();
-            return true; // ✅ Успех!
+            return true; // Успех!
         }
 
         // ДОБАВИТЬ ФОТО к товару

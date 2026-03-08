@@ -28,5 +28,6 @@ namespace Marketplace.Data.Entities
 
         [ForeignKey("SkuId")]
         public virtual ProductSku ProductSku { get; set; } = null!;
+        public decimal Total => Quantity * (ProductSku?.Price ?? 0);//Евгений
     }
 }

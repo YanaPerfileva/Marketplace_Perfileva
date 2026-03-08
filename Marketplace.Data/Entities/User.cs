@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Marketplace.Data.Enums;
@@ -45,7 +46,8 @@ namespace Marketplace.Data.Entities
         public virtual ICollection<Cart> Carts { get; set; } = new HashSet<Cart>();
         public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
         public virtual ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
-        public virtual ICollection<Favorite> Favorites { get; set; } = new HashSet<Favorite>();
+        public virtual ObservableCollection<Favorite> Favorites { get; set; } = new ObservableCollection<Favorite>();//Евгений
+       // public virtual ICollection<Favorite> Favorites { get; set; } = new HashSet<Favorite>();
         public virtual ICollection<UserLog> UserLogs { get; set; } = new HashSet<UserLog>();
         public virtual ICollection<PriceHistory> PriceHistories { get; set; } = new HashSet<PriceHistory>();
         public virtual Seller? Seller { get; set; }

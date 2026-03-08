@@ -12,6 +12,7 @@ namespace Marketplace.DAL.Interfaces
         Task<Product?> GetProductWithReviewsAsync(int productId);
         Task<Product?> GetProductWithImagesAsync(int productId);
         Task<Product?> GetProductWithSkusAsync(int productId);
+        Task<IEnumerable<Category>> GetAllCategoriesAsync();//Евгений
         Task<PaginatedResult<ProductDto>> GetPaginatedProductsAsync(
             string? search = null,
             int? categoryId = null,
@@ -21,5 +22,6 @@ namespace Marketplace.DAL.Interfaces
             int pageSize = 10,
             string sortBy = "CreatedAt",
             bool ascending = false);
+   
     }
 }

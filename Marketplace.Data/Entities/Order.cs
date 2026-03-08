@@ -58,5 +58,6 @@ namespace Marketplace.Data.Entities
         public virtual Payment? Payment { get; set; }
         public virtual Shipping? Shipping { get; set; }
         public virtual ICollection<Review> Reviews { get; set; } = new HashSet<Review>();
+        public string DiscountDisplay => TotalPrice > 0 ? $"{Math.Round((DiscountAmount / TotalPrice) * 100)}%" : "0%";//Евгений
     }
 }
