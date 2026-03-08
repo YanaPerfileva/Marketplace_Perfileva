@@ -14,7 +14,7 @@
         <StackPanel Orientation="Horizontal" Margin="10" Background="LightGray">
             <TextBlock Text="Seller ID:" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBox x:Name="SellerIdInput" Width="60" Text="1" VerticalContentAlignment="Center"/>
-            <Button x:Name="LoadButton" Content=" Загрузить" Width="90" Click="LoadSellerDashboard_Click" Margin="5,0,0,0"/>
+            <!--<Button x:Name="LoadButton" Content=" Загрузить" Width="90" Click="LoadSellerDashboard_Click" Margin="5,0,0,0"/>-->
             <TextBlock x:Name="SellerIdLabel" Text="Seller #1" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
             <TextBlock x:Name="StatusLabel" Text="Готов" Foreground="Green" VerticalAlignment="Center"/>
             <Button x:Name="AddProductButton" Content="Добавить товар" Width="140" Click="AddProductButton_Click"/>

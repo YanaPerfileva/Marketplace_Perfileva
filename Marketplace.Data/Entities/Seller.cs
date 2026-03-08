@@ -40,5 +40,15 @@ namespace Marketplace.Data.Entities
 
         public virtual ICollection<Product> Products { get; set; } = new HashSet<Product>();
         public virtual ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+
+        public class MainWindow
+        {
+            private object id;
+
+            public MainWindow(object id)
+            {
+                this.id = id;
+            }
+        }
     }
 }

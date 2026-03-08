@@ -51,5 +51,15 @@ namespace Marketplace.Data.Entities
         public virtual ICollection<UserLog> UserLogs { get; set; } = new HashSet<UserLog>();
         public virtual ICollection<PriceHistory> PriceHistories { get; set; } = new HashSet<PriceHistory>();
         public virtual Seller? Seller { get; set; }
+
+        public class MainWindow
+        {
+            private int id;
+
+            public MainWindow(int id)
+            {
+                this.id = id;
+            }
+        }
     }
 }

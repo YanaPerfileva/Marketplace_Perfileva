@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Marketplace.DAL.Repositories;
 using Marketplace.Data.Context;
+using Marketplace.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Seller
@@ -23,30 +24,30 @@ namespace Seller
         private readonly SellerRepository _sellerRepo;
         private int _sellerId = 1;
         private int _productId;
+        private int id;
         private static readonly DbContextOptions<MarketplaceContext> _dbOptions =
             new DbContextOptionsBuilder<MarketplaceContext>()
             .UseSqlServer(@"Server=.\SQLEXPRESS;Database=MarketplaceDb;Trusted_Connection=true;TrustServerCertificate=true;")
             .Options;
 
-        public MainWindow()
+        public MainWindow(int sellerId)
         {
             InitializeComponent();
             _context = new MarketplaceContext(_dbOptions);
             _sellerRepo = new SellerRepository(_context);
-            SellerIdInput.Text = "1";
+            _sellerId = sellerId;
+
+            SellerIdInput.Text = sellerId.ToString();
+            SellerIdInput.Visibility = Visibility.Collapsed; 
+
+            
+            _ = LoadSellerDashboard(); 
         }
 
-        private async void LoadSellerDashboard_Click(object sender, RoutedEventArgs e)
+        private async Task LoadSellerDashboard() 
         {
             try
             {
-                if (!int.TryParse(SellerIdInput.Text, out _sellerId) || _sellerId <= 0)
-                {
-                    StatusLabel.Text = "Введите ID продавца (1)";
-                    StatusLabel.Foreground = Brushes.Red;
-                    return;
-                }
-
                 StatusLabel.Text = "Загрузка...";
                 StatusLabel.Foreground = Brushes.Orange;
 
@@ -61,14 +62,15 @@ namespace Seller
                 }
                 else
                 {
-                    StatusLabel.Text = "Продавец не найден";
+                    StatusLabel.Text = $"Продавец #{_sellerId} не найден";
                     StatusLabel.Foreground = Brushes.Red;
                 }
             }
             catch (Exception ex)
             {
-                StatusLabel.Text = $"{ex.Message}";
+                StatusLabel.Text = $"Ошибка: {ex.Message}";
                 StatusLabel.Foreground = Brushes.Red;
+                MessageBox.Show($"Ошибка загрузки: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -95,45 +97,26 @@ namespace Seller
             LowStockListView.ItemsSource = new List<object>();
         }
 
-        //private void ReplenishStock_Click(object sender, RoutedEventArgs e)
-        //{
-        //    MessageBox.Show("Функция пополнения (в разработке)", "Пополнить",
-        //        MessageBoxButton.OK, MessageBoxImage.Information);
-        //}
-
-
-        //private void NewProductButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var productWindow = new ProductWindow(_sellerId);  
-        //    if (productWindow.ShowDialog() == true)
-        //        LoadSellerDashboard_Click(null, null);
-        //}
-
-
-        //private async void EditProductButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var productWindow = new ProductWindow(_sellerId); 
-        //    productWindow.ShowDialog();
-        //}
+        
         private void AddProductButton_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new AddProductWindow(_sellerId);
             if (addWindow.ShowDialog() == true)
-                LoadSellerDashboard_Click(null, null);
+                LoadSellerDashboard();
         }
 
         private void EditProductButton_Click(object sender, RoutedEventArgs e)
         {
             var editWindow = new EditProductWindow(_sellerId);
             if (editWindow.ShowDialog() == true)
-                LoadSellerDashboard_Click(null, null);
+                LoadSellerDashboard();
         }
 
         private void DeleteProductButton_Click(object sender, RoutedEventArgs e)
         {
             var deleteWindow = new DeleteProductWindow(_sellerId);
             if (deleteWindow.ShowDialog() == true)
-                LoadSellerDashboard_Click(null, null);
+                LoadSellerDashboard();
         }
     }
 }

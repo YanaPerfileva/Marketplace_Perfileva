@@ -21,6 +21,7 @@ using System.Windows.Shapes;
 using static User.AuthWindow;
 
 
+
 namespace User
 {
     /// <summary>
@@ -287,6 +288,7 @@ namespace User
             }
         }
 
+        
         private void Auth_Click(object sender, RoutedEventArgs e)
         {
             if (UserSession.CurrentUser != null)
@@ -294,7 +296,7 @@ namespace User
                 if (MessageBox.Show("Выйти из аккаунта?", "Выход", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     UserSession.CurrentUser = null;
-                    AuthButton.Content = "Войти"; 
+                    AuthButton.Content = "Войти";
                     StatusMessage = "Вы вышли из системы";
                     if (MainFrame.Content is RevewsPage page) page.UpdateControlsState();
                 }
@@ -302,7 +304,7 @@ namespace User
             }
 
             AuthWindow authWin = new AuthWindow();
-            if (authWin.ShowDialog() == true) 
+            if (authWin.ShowDialog() == true)
             {
                 AuthButton.Content = $"Выйти ({UserSession.CurrentUser?.FullName})";
                 StatusMessage = $"Добро пожаловать, {UserSession.CurrentUser?.FullName}!";
