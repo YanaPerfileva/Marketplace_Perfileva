@@ -5,165 +5,201 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Seller"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1000">
+        Title="Администратор" Height="900" Width="1000">
     <Grid Margin="20">
+        <Grid.Resources>
+            <!-- Анимация появления для всех карточек -->
+            <Storyboard x:Key="FadeIn">
+                <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.6"/>
+                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" 
+                             From="20" To="0" Duration="0:0:0.4"/>
+            </Storyboard>
+
+            <Style x:Key="StatCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="CornerRadius" Value="15"/>
+                <Setter Property="Padding" Value="20"/>
+                <Setter Property="Margin" Value="8"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.05"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <TranslateTransform/>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard Storyboard="{StaticResource FadeIn}"/>
+                    </EventTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <!-- Верхний тулбар -->
+            <RowDefinition Height="Auto"/>
+            <!-- Блок карточек (7 штук) -->
             <RowDefinition Height="*"/>
+            <!-- Таблица продуктов -->
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Margin="10" Background="LightGray">
-            <TextBlock Text="Seller ID:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <TextBox x:Name="SellerIdInput" Width="60" Text="1" VerticalContentAlignment="Center"/>
-            <!--<Button x:Name="LoadButton" Content=" Загрузить" Width="90" Click="LoadSellerDashboard_Click" Margin="5,0,0,0"/>-->
-            <TextBlock x:Name="SellerIdLabel" Text="Seller #1" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-            <TextBlock x:Name="StatusLabel" Text="Готов" Foreground="Green" VerticalAlignment="Center"/>
-            <Button x:Name="AddProductButton" Content="Добавить товар" Width="140" Click="AddProductButton_Click"/>
-            <Button x:Name="EditProductButton" Content="Изменить товар" Width="140" Click="EditProductButton_Click"/>
-            <Button x:Name="DeleteProductButton" Content="Удалить товар" Width="140" Click="DeleteProductButton_Click"/>
-        </StackPanel>
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <UniformGrid Grid.Row="0" Rows="2" Columns="4" Margin="0,0,0,30">
-                <Border Background="White" CornerRadius="12" Padding="25" Margin="10"
-                    BorderBrush="#E0E0E0" BorderThickness="1">
-                    <StackPanel>
-                        <TextBlock x:Name="TotalProductsText" Text="0" 
-                               FontSize="36" FontWeight="Bold" Foreground="#007BFF"
-                               HorizontalAlignment="Center"/>
-                        <TextBlock Text="Товаров" FontSize="14" Foreground="#666"
-                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                    </StackPanel>
-                </Border>
 
-                <Border Background="White" CornerRadius="12" Padding="25" Margin="10">
-                    <StackPanel>
-                        <TextBlock x:Name="TotalSkusText" Text="0" FontSize="36" 
-                               FontWeight="Bold" Foreground="#007BFF" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Вариантов (SKU)" FontSize="14" Foreground="#666"
-                               HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Background="White" CornerRadius="12" Padding="25" Margin="10">
-                    <StackPanel>
-                        <TextBlock x:Name="TotalStockText" Text="0" FontSize="36" 
-                               FontWeight="Bold" Foreground="#28A745" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Общий остаток" FontSize="14" Foreground="#666"
-                               HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Background="White" CornerRadius="12" Padding="25" Margin="10">
-                    <StackPanel>
-                        <TextBlock x:Name="TotalOrdersText" Text="0" FontSize="36" 
-                               FontWeight="Bold" Foreground="#17A2B8" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Заказов" FontSize="14" Foreground="#666"
-                               HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Background="White" CornerRadius="12" Padding="25" Margin="10">
-                    <StackPanel>
-                        <TextBlock x:Name="ItemsSoldText" Text="0" FontSize="36" 
-                               FontWeight="Bold" Foreground="#FFC107" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Продано единиц" FontSize="14" Foreground="#666"
-                               HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Background="White" CornerRadius="12" Padding="25" Margin="10">
-                    <StackPanel>
-                        <TextBlock x:Name="TotalRevenueText" Text="0" FontSize="36" 
-                               FontWeight="Bold" Foreground="#28A745" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Выручка" FontSize="14" Foreground="#666"
-                               HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-
-                <Border Background="White" CornerRadius="12" Padding="25" Margin="10">
-                    <StackPanel>
-                        <TextBlock x:Name="AvgRatingText" Text="0" FontSize="36" 
-                               FontWeight="Bold" Foreground="#6F42C1" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Средний рейтинг" FontSize="14" Foreground="#666"
-                               HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
-            <Grid Grid.Row="1">
+        <!-- 1. ВЕРХНЯЯ ПАНЕЛЬ (СОХРАНЕНЫ ВСЕ КНОПКИ) -->
+        <Border Grid.Row="0" Background="White" CornerRadius="15" Padding="15,10" Margin="8,0,8,0" >
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.05"/>
+            </Border.Effect>
+            <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Левая часть: ID и Загрузка -->
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <!-- Пробел -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Правая часть: Кнопки действий -->
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Background="White" CornerRadius="12" Margin="0,0,15,0"
-                    BorderBrush="#E0E0E0" BorderThickness="1">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Топ-5 товаров" FontSize="20" 
-                               FontWeight="Bold" Margin="25,25,25,15" Foreground="#333"/>
+                <!-- ЛЕВАЯ СТОРОНА -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="🛒" FontSize="24" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                    <TextBlock Text="ID:" VerticalAlignment="Center" Foreground="#718096" Margin="0,0,5,0"/>
+                    <TextBox x:Name="SellerIdInput" Width="45" Text="1" 
+         Style="{StaticResource ModernInput}" 
+         Margin="0,0,10,0" 
+         PreviewMouseDown="If_seller"  
+                   />
+                        <Button x:Name="LoadButton" Content="Загрузить" Width="116" Height="43" 
+                    Style="{StaticResource RoundedButtonStyle}" Click="LoadSellerDashboard_Click"/>
 
-                        <ListView x:Name="TopProductsListView" Grid.Row="1" Margin="25">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="#F8F9FA" Margin="0,0,0,10" CornerRadius="8" Padding="20">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16"/>
-                                            <TextBlock Text="{Binding Brand}" Foreground="#666" Margin="0,5"/>
-                                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                                <TextBlock Text="Заказов:" Margin="0,0,15,0"/>
-                                                <TextBlock Text="{Binding OrdersCount}"/>
-                                                <TextBlock Text="Продано:" Margin="15,0,15,0"/>
-                                                <TextBlock Text="{Binding SoldCount}"/>
-                                            </StackPanel>
-                                            <TextBlock Text="{Binding Revenue, StringFormat='Выручка: ₽{0:N}'}" 
-                                                   FontWeight="SemiBold" Foreground="#28A745"/>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-                </Border>
-                <Border Grid.Column="1" Background="White" CornerRadius="12" Margin="15,0,0,0"
-                    BorderBrush="#E0E0E0" BorderThickness="1">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Низкие остатки (≤10)" FontSize="20" 
-                               FontWeight="Bold" Margin="25,25,25,15" Foreground="#DC3545"/>
+                    <Separator Margin="15,5" Background="#E2E8F0"/>
 
-                        <ListView x:Name="LowStockListView" Grid.Row="1" Margin="25">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="#FFF3CD" Margin="0,0,0,10" CornerRadius="8" 
-                                        Padding="20" BorderBrush="#FFEAA7" BorderThickness="1">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16"/>
-                                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                                <TextBlock Text="{Binding Size, StringFormat=' {0} | '}" 
-                                                       Foreground="#666"/>
-                                                <TextBlock Text="{Binding Color}" Foreground="#666"/>
-                                            </StackPanel>
-                                            <TextBlock Text="{Binding Stock, StringFormat='Остаток: {0} шт'}" 
-                                                   FontSize="18" FontWeight="Bold" Foreground="#DC3545"/>
-                                            <!--<Button Content="Пополнить" Width="100" Height="35" Margin="0,10,0,0"></Button>
-                                            Background="#007BFF" Foreground="White" Click="ReplenishStock_Click"/>-->
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-                </Border>
+                    <TextBlock x:Name="SellerIdLabel" Text="Seller #1" FontWeight="Bold" VerticalAlignment="Center" Foreground="#2D3748"/>
+                    <TextBlock x:Name="StatusLabel" Text="● Готов" Foreground="#48BB78" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="12"/>
+                </StackPanel>
+
+                <!-- ПРАВАЯ СТОРОНА (Действия) -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button x:Name="AddProductButton" Content="Добавить" Width="110" Height="43" 
+                    Style="{StaticResource RoundedButtonStyle}" Margin="4,0" Click="AddProductButton_Click"/>
+
+                    <Button x:Name="EditProductButton" Content="Изменить" Width="110" Height="43"
+                    Background="#EDF2F7" Foreground="#4A5568" 
+                    Style="{StaticResource RoundedButtonStyle}" Margin="4,0" Click="EditProductButton_Click"/>
+
+                    <Button x:Name="DeleteProductButton" Content="Удалить" Width="110" Height="43" 
+                    Background="#FFF5F5" Foreground="#F56565" 
+                    Style="{StaticResource RoundedButtonStyle}" Margin="4,0" Click="DeleteProductButton_Click"/>
+                </StackPanel>
             </Grid>
-        </Grid>
+        </Border>
+
+        <!-- 2. СЕТКА КАРТОЧЕК (ВСЕ 7 ЭЛЕМЕНТОВ) -->
+        <UniformGrid Grid.Row="1" Rows="2" Columns="4" Margin="0,0,0,15">
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="TotalProductsText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#007BFF" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Товаров" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="TotalSkusText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#007BFF" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Вариантов (SKU)" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="TotalStockText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#28A745" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Общий остаток" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="TotalOrdersText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#17A2B8" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Заказов" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="ItemsSoldText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#FFC107" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Продано единиц" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="TotalRevenueText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#28A745" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Выручка" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource StatCardStyle}">
+                <StackPanel>
+                    <TextBlock x:Name="AvgRatingText" Text="0" FontSize="28" FontWeight="Bold" Foreground="#6F42C1" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Средний рейтинг" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Пустая карточка для симметрии или логотипа -->
+            <Border Background="Transparent" Margin="10"/>
+        </UniformGrid>
+
+        <!-- 3. ТАБЛИЦА (ИСПРАВЛЕНА СЕТКА) -->
+        <Border Grid.Row="2" Background="White" CornerRadius="20" Margin="8" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" Opacity="0.05"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                    <TextBlock Text="Продукты продавца" FontSize="18" FontWeight="Bold" Foreground="#333"/>
+                    <TextBlock x:Name="ProductsCountLabel" Text="(0)" Foreground="#999" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <DataGrid x:Name="ProductsDataGrid" Grid.Row="1" 
+                      AutoGenerateColumns="False" CanUserAddRows="False"
+                      BorderThickness="0" 
+                      IsReadOnly="True" RowHeight="42">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="Бренд" Binding="{Binding Brand}" Width="120" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="Категория" Binding="{Binding CategoryName}" Width="120" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat='{}{0:N0} ₽'}" Width="100" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="Остаток" Binding="{Binding Stock}" Width="90" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTemplateColumn Header="Статус" Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="StatusBadge" CornerRadius="6" Padding="6,2">
+                                        <TextBlock Text="{Binding Status}" FontSize="11" HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="Неактивен">
+                                            <Setter TargetName="StatusBadge" Property="Background" Value="#FFE5E5"/>
+                                            <Setter TargetName="StatusBadge" Property="TextBlock.Foreground" Value="#D32F2F"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="Активен">
+                                            <Setter TargetName="StatusBadge" Property="Background" Value="#E5F9E5"/>
+                                            <Setter TargetName="StatusBadge" Property="TextBlock.Foreground" Value="#388E3C"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

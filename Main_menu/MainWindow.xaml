@@ -1,0 +1,135 @@
+﻿<Window x:Class="Main_menu.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Main_menu"
+        mc:Ignorable="d"
+        Title="Marketplace" Height="600" Width="900" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#F8F9FA">
+
+    <Window.Resources>
+        <!-- Стиль для кнопок с закругленными углами -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#667eea" Offset="0.0"/>
+                        <GradientStop Color="#764ba2" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="25,15"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder" 
+                                CornerRadius="20" 
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#5a67d8" Offset="0.0"/>
+                                            <GradientStop Color="#6b46c1" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.98" ScaleY="0.98"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Фон -->
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#667eea" Offset="0.2"/>
+                    <GradientStop Color="#764ba2" Offset="0.7"/>
+                    <GradientStop Color="#f093fb" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <!-- Контент -->
+        <Border Background="White" CornerRadius="25" Margin="50" Opacity="0.95">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" ShadowDepth="10" Opacity="0.3"/>
+            </Border.Effect>
+
+            <Grid Margin="60">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Логотип -->
+                <Viewbox Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,40">
+                    <Canvas Width="120" Height="120">
+                        <Ellipse Width="120" Height="120" Fill="#667eea" Stroke="White" StrokeThickness="6">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform Angle="45"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <Ellipse Width="60" Height="60" Canvas.Left="30" Canvas.Top="30" Fill="White" Opacity="0.9"/>
+                        <TextBlock Text="🛒" Canvas.Left="48" Canvas.Top="38" FontSize="36" FontWeight="Bold"/>
+                    </Canvas>
+                </Viewbox>
+
+                <!-- Заголовок -->
+                <TextBlock Grid.Row="1" Text="Добро пожаловать в Marketplace!" 
+                          FontSize="36" FontWeight="Bold" HorizontalAlignment="Center"
+                          Foreground="#2d3748" Margin="0,0,0,10"/>
+
+                <!-- Текст -->
+                <TextBlock Grid.Row="2" Text="Найдите всё, что вам нужно, или начните продавать свои товары уже сегодня!" 
+                          FontSize="18" HorizontalAlignment="Center" Foreground="#4a5568"
+                          TextWrapping="Wrap" Margin="0,0,0,50" LineHeight="28"/>
+
+                <!-- Кнопки -->
+                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="BuyerButton" Content="Я покупатель" 
+                           Width="220" Height="70" Margin="0,0,30,0"
+                           Style="{StaticResource RoundedButtonStyle}"
+                           Click="BuyerButton_Click"/>
+
+                    <Button x:Name="SellerButton" Content="Я продавец" 
+                           Width="220" Height="70"
+                           Style="{StaticResource RoundedButtonStyle}"
+                           Click="SellerButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

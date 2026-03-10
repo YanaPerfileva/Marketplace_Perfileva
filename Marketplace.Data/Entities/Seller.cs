@@ -50,5 +50,12 @@ namespace Marketplace.Data.Entities
                 this.id = id;
             }
         }
+
+        public class AuthWindow
+        {
+            public AuthWindow()
+            {
+            }
+        }
     }
 }

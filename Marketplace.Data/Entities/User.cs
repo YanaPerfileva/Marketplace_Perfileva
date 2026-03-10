@@ -56,6 +56,10 @@ namespace Marketplace.Data.Entities
         {
             private int id;
 
+            public MainWindow()
+            {
+            }
+
             public MainWindow(int id)
             {
                 this.id = id;

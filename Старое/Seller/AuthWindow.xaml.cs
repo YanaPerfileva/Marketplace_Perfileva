@@ -1,6 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,11 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Marketplace.Data.Context;
-using Marketplace.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 
-namespace User
+namespace Seller
 {
     /// <summary>
     /// Логика взаимодействия для AuthWindow.xaml
@@ -42,24 +43,35 @@ namespace User
             RegisterPanel.Visibility = isLoginVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
+      
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
-
             string email = LoginEmail.Text.Trim();
             string password = LoginPass.Password;
-            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.PasswordHash == password);
-            if (user != null)
+
+            var user = _context.Users
+                .Include(u => u.Seller) 
+                .FirstOrDefault(u => u.Email == email && u.PasswordHash == password && u.IsActive);
+
+            if (user != null && user.Role == Marketplace.Data.Enums.UserRole.seller && user.Seller != null)
             {
                 UserSession.CurrentUser = user;
-                this.DialogResult = true;
-                MessageBox.Show("Вход выполнен успешно!", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                var sellerDashboard = new MainWindow(user.Seller.Id);
+                sellerDashboard.Show();
+
+                MessageBox.Show($"Добро пожаловать в дашборд, {user.FullName}!", "Успех",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Неверный email или пароль", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Доступ только для продавцов с профилем!", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        
 
         private async void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
@@ -70,7 +82,7 @@ namespace User
             }
 
             string cleanPhone = new string(RegPhone.Text.Where(char.IsDigit).ToArray());
-            if (cleanPhone.Length < 11 )
+            if (cleanPhone.Length < 11)
             {
                 MessageBox.Show("Номер телефона должен содержать минимум 11 цифр!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -103,7 +115,7 @@ namespace User
 
             if (_context.Users.Any(u => u.Email == RegEmail.Text))
             {
-                MessageBox.Show("Email занят!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Exclamation); 
+                MessageBox.Show("Email занят!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
             }
             var newUser = new Marketplace.Data.Entities.User
@@ -112,7 +124,7 @@ namespace User
                 Phone = RegPhone.Text,
                 Email = RegEmail.Text,
                 PasswordHash = RegPass.Password,
-                Role = Marketplace.Data.Enums.UserRole.buyer,
+                Role = Marketplace.Data.Enums.UserRole.seller,
                 CreatedAt = DateTime.Now,
                 IsActive = true
             };
@@ -121,41 +133,26 @@ namespace User
             await _context.SaveChangesAsync();
             UserSession.CurrentUser = newUser;
 
-
+         
             await SendRegistrationEmailAsync(newUser);
 
-            MessageBox.Show("Аккаунт создан! Письмо отправлено на почту!", "Поздравляем!",
+            MessageBox.Show("Аккаунт создан! Письмо отправлено на почту!","Поздравляем!",
                 MessageBoxButton.OK, MessageBoxImage.Information);
             TogglePanels_Click(null, null);
-
-            // Было у Евгения
-            //var newUser = new Marketplace.Data.Entities.User
-            // {
-            //      FullName = RegName.Text,
-            //      Phone= RegPhone.Text,
-            //      Email = RegEmail.Text,
-            //      PasswordHash= RegPass.Password,
-            //      Role = Marketplace.Data.Enums.UserRole.buyer,
-            //      CreatedAt = DateTime.Now,
-            //      IsActive = true
-            // };
-            //_context.Users.Add(newUser);
-            //await _context.SaveChangesAsync();
-            //UserSession.CurrentUser = newUser;
-            //MessageBox.Show("Успех! Теперь можете войти!", "Вход", MessageBoxButton.OK, MessageBoxImage.Information);
-            //TogglePanels_Click(null, null); 
+            
         }
 
         private void RegPhone_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !e.Text.All(char.IsDigit);
         }
+
         private async Task SendRegistrationEmailAsync(Marketplace.Data.Entities.User user)
         {
             try
             {
-                string adminEmail = "НЕ СКАЖУ";
-                string appPassword = "НЕ СКАЖУ";
+                string adminEmail = "НЕ СКАЖУ";  
+                string appPassword = "НЕ  СКАЖУ";    
 
                 var emailMessage = new MimeMessage();
                 emailMessage.From.Add(new MailboxAddress("Marketplace", adminEmail));
@@ -172,7 +169,7 @@ namespace User
 Имя: {user.FullName}
 Email: {user.Email}
 Телефон: {user.Phone}
-Роль: Покупатель
+Роль: Продавец
 
 Что дальше:
 1. Войдите в систему
@@ -187,7 +184,7 @@ Email: {user.Email}
 "
                 };
 
-
+               
                 var smtpClient = new MailKit.Net.Smtp.SmtpClient();
                 await smtpClient.ConnectAsync("smtp.yandex.ru", 587, MailKit.Security.SecureSocketOptions.StartTls);  // ← ЯНДЕКС!
                 await smtpClient.AuthenticateAsync(adminEmail, appPassword);
@@ -201,3 +198,4 @@ Email: {user.Email}
         }
     }
 }
+

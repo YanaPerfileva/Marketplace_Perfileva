@@ -5,35 +5,109 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Seller"
         mc:Ignorable="d"
-        Title="AuthWindow" Height="550" Width="400"
+        Title="Авторизация" Height="550" Width="400"
     WindowStartupLocation="CenterScreen" Background="LightBlue">
-    <Border Background="White" CornerRadius="15" Margin="30" Padding="20">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="20" Opacity="0.1"/>
-        </Border.Effect>
-        <Grid Background="#F0F2F5">
-            <StackPanel x:Name="LoginPanel" Visibility="Visible">
-                <TextBlock Text="Вход в аккаунт" FontSize="22" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
-                <TextBlock Text="Email"/>
-                <TextBox x:Name="LoginEmail" Height="35" Margin="0,5,0,15" VerticalContentAlignment="Center"/>
-                <TextBlock Text="Пароль"/>
-                <PasswordBox x:Name="LoginPass" Height="35" Margin="0,5,0,20" VerticalContentAlignment="Center"/>
-                <Button Content="Войти" Click="BtnLogin_Click" Background="#28a745" Foreground="White" Height="40" FontWeight="Bold"/>
-                <Button Content="Нет аккаунта? Регистрация" Click="TogglePanels_Click" Background="Transparent" BorderThickness="0" Foreground="#007BFF" Margin="0,10"/>
-            </StackPanel>
-            <StackPanel x:Name="RegisterPanel" Visibility="Collapsed">
-                <TextBlock Text="Регистрация" FontSize="22" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
-                <TextBlock Text="ФИО" FontWeight="SemiBold"/>
-                <TextBox x:Name="RegName" Height="30" Margin="0,5,0,10"/>
-                <TextBlock Text="Телефон" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                <TextBox x:Name="RegPhone" Height="30" Margin="0,5,0,10" VerticalContentAlignment="Center" Padding="5,0" PreviewTextInput="RegPhone_PreviewTextInput"  ToolTip="Формат: 89001234567" MaxLength="11"/>
-                <TextBlock Text="Email" FontWeight="SemiBold"/>
-                <TextBox x:Name="RegEmail" Height="30" Margin="0,5,0,10"/>
-                <TextBlock Text="Пароль" FontWeight="SemiBold"/>
-                <PasswordBox x:Name="RegPass" Height="30" Margin="0,5,0,15"/>
-                <Button Content="Создать аккаунт" Click="BtnRegister_Click" Background="#007BFF" Foreground="White" Height="40" FontWeight="Bold"/>
-                <Button Content="Уже есть аккаунт? Войти" Click="TogglePanels_Click" Background="Transparent" BorderThickness="0" Foreground="#666" Margin="0,10"/>
-            </StackPanel>
-        </Grid>
-    </Border>
+    <Window.Resources>
+        <!-- Тот же стиль кнопок из главного меню -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#667eea" Offset="0.0"/>
+                        <GradientStop Color="#764ba2" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder" CornerRadius="15" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для полей ввода -->
+        <Style TargetType="Control" x:Key="InputStyle">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="0,5,0,15"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Общий фон с градиентом -->
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#667eea" Offset="0.2"/>
+                    <GradientStop Color="#764ba2" Offset="0.7"/>
+                    <GradientStop Color="#f093fb" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <!-- Карточка формы -->
+        <Border Background="White" CornerRadius="25" Margin="30" Opacity="0.95">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" ShadowDepth="10" Opacity="0.2"/>
+            </Border.Effect>
+
+            <Grid Margin="30,20">
+                <!-- Панель Входа -->
+                <StackPanel x:Name="LoginPanel" Visibility="Visible" VerticalAlignment="Center">
+                    <TextBlock Text="Вход в аккаунт" FontSize="26" FontWeight="Bold" Foreground="#2d3748" Margin="0,0,0,25" HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Email" Foreground="#4a5568" FontWeight="Medium"/>
+                    <TextBox x:Name="LoginEmail" Style="{StaticResource InputStyle}"/>
+
+                    <TextBlock Text="Пароль" Foreground="#4a5568" FontWeight="Medium"/>
+                    <PasswordBox x:Name="LoginPass" Style="{StaticResource InputStyle}"/>
+
+                    <Button Content="Войти" Click="BtnLogin_Click" Style="{StaticResource RoundedButtonStyle}" Height="45" Margin="0,10,0,0"/>
+
+                    <Button Content="Создать новый аккаунт" Click="TogglePanels_Click" 
+                            Background="Transparent" BorderThickness="0" Foreground="#764ba2" 
+                            FontWeight="SemiBold" Margin="0,15,0,0"/>
+                </StackPanel>
+
+                <!-- Панель Регистрации -->
+                <StackPanel x:Name="RegisterPanel" Visibility="Collapsed" VerticalAlignment="Center">
+                    <TextBlock Text="Регистрация" FontSize="26" FontWeight="Bold" Foreground="#2d3748" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="ФИО" Foreground="#4a5568" FontSize="13"/>
+                    <TextBox x:Name="RegName" Style="{StaticResource InputStyle}" Height="35"/>
+
+                    <TextBlock Text="Телефон" Foreground="#4a5568" FontSize="13"/>
+                    <TextBox x:Name="RegPhone" Style="{StaticResource InputStyle}" Height="35" MaxLength="11" PreviewTextInput="RegPhone_PreviewTextInput"/>
+
+                    <TextBlock Text="Email" Foreground="#4a5568" FontSize="13"/>
+                    <TextBox x:Name="RegEmail" Style="{StaticResource InputStyle}" Height="35"/>
+
+                    <TextBlock Text="Пароль" Foreground="#4a5568" FontSize="13"/>
+                    <PasswordBox x:Name="RegPass" Style="{StaticResource InputStyle}" Height="35"/>
+
+                    <Button Content="Зарегистрироваться" Click="BtnRegister_Click" Style="{StaticResource RoundedButtonStyle}" Height="45" Margin="0,10,0,0"/>
+
+                    <Button Content="Уже есть профиль? Войти" Click="TogglePanels_Click" 
+                            Background="Transparent" BorderThickness="0" Foreground="#764ba2" 
+                            FontWeight="SemiBold" Margin="0,15,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

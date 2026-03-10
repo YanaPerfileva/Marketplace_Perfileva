@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Marketplace.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 
 namespace Seller
 {
@@ -42,35 +43,30 @@ namespace Seller
             RegisterPanel.Visibility = isLoginVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
-      
+
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             string email = LoginEmail.Text.Trim();
             string password = LoginPass.Password;
 
             var user = _context.Users
-                .Include(u => u.Seller) 
-                .FirstOrDefault(u => u.Email == email && u.PasswordHash == password && u.IsActive);
+                .FirstOrDefault(u => u.Email == email && u.PasswordHash == password && u.IsActive);//Евгений
 
-            if (user != null && user.Role == Marketplace.Data.Enums.UserRole.seller && user.Seller != null)
+            if (user != null && user.Role == Marketplace.Data.Enums.UserRole.admin || user != null && user.Role == Marketplace.Data.Enums.UserRole.seller)
             {
                 UserSession.CurrentUser = user;
 
-                var sellerDashboard = new MainWindow(user.Seller.Id);
+                var sellerDashboard = new MainWindow();//Евгений
+                sellerDashboard.SetCurrentUser(user);
                 sellerDashboard.Show();
 
                 MessageBox.Show($"Добро пожаловать в дашборд, {user.FullName}!", "Успех",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
-            else
-            {
-                MessageBox.Show("Доступ только для продавцов с профилем!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
         }
 
-        
 
         private async void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
@@ -123,20 +119,90 @@ namespace Seller
                 Phone = RegPhone.Text,
                 Email = RegEmail.Text,
                 PasswordHash = RegPass.Password,
-                Role = Marketplace.Data.Enums.UserRole.seller,
+                Role = Marketplace.Data.Enums.UserRole.admin,
                 CreatedAt = DateTime.Now,
                 IsActive = true
             };
+
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
             UserSession.CurrentUser = newUser;
-            MessageBox.Show("Успех! Теперь можете войти!", "Вход", MessageBoxButton.OK, MessageBoxImage.Information);
+
+         
+            await SendRegistrationEmailAsync(newUser);
+
+            MessageBox.Show("Аккаунт создан! Письмо отправлено на почту!","Поздравляем!",
+                MessageBoxButton.OK, MessageBoxImage.Information);
             TogglePanels_Click(null, null);
+            
         }
 
         private void RegPhone_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !e.Text.All(char.IsDigit);
+        }
+
+        private async Task SendRegistrationEmailAsync(Marketplace.Data.Entities.User user)
+        {
+            try
+            {
+                string adminEmail = "НЕ СКАЖУ";  
+                string appPassword = "НЕ  СКАЖУ";
+
+                var emailMessage = new MimeMessage();
+
+                // Используем Parse, чтобы MailKit сам обработал формат
+                emailMessage.From.Add(MailboxAddress.Parse(adminEmail.Trim()));
+                emailMessage.From[0].Name = "Marketplace";
+
+                // Добавляем проверку на валидность перед Parse
+                if (string.IsNullOrWhiteSpace(user.Email) || !user.Email.Contains("@"))
+                {
+                    throw new Exception($"Некорректный Email адрес: '{user.Email}'");
+                }
+
+                emailMessage.To.Add(MailboxAddress.Parse(user.Email.Trim()));
+                // Присваиваем имя отдельно, чтобы избежать ошибок парсинга строки с именем
+                emailMessage.To[0].Name = string.IsNullOrWhiteSpace(user.FullName) ? "Покупатель" : user.FullName;
+
+                emailMessage.Subject = $"Регистрация в Marketplace - {user.FullName}!";
+
+                emailMessage.Body = new TextPart("plain")
+                {
+                    Text = $@"Добро пожаловать в Marketplace, {user.FullName}!
+
+Ваш аккаунт успешно создан!
+
+Данные аккаунта:
+Имя: {user.FullName}
+Email: {user.Email}
+Телефон: {user.Phone}
+Роль: Администратор
+
+Что дальше:
+1. Войдите в систему
+2. Создайте профиль магазина
+3. Добавьте товары
+
+С уважением,
+Команда Marketplace
+
+---
+Это автоматическое письмо. Пожалуйста, не отвечайте на него.
+"
+                };
+
+               
+                var smtpClient = new MailKit.Net.Smtp.SmtpClient();
+                await smtpClient.ConnectAsync("smtp.yandex.ru", 587, MailKit.Security.SecureSocketOptions.StartTls);  // ← ЯНДЕКС!
+                await smtpClient.AuthenticateAsync(adminEmail, appPassword);
+                await smtpClient.SendAsync(emailMessage);
+                await smtpClient.DisconnectAsync(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка email: {ex.Message}", "Предупреждение");
+            }
         }
     }
 }

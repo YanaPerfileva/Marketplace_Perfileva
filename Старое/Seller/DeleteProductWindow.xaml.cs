@@ -79,7 +79,7 @@ namespace Seller
                         DeleteButton.IsEnabled = false;
                         DeleteButton.Content = "Удаление...";
 
-                        //  SQL УДАЛЕНИЕ ПО ID - 100% работает!
+                        // ✅ SQL УДАЛЕНИЕ ПО ID - 100% работает!
                         var productId = product.Id;
 
                         // Удаляем SKU сначала
@@ -119,7 +119,6 @@ namespace Seller
         {
             DialogResult = false;
             Close();
-
         }
 
         protected override void OnClosed(EventArgs e)

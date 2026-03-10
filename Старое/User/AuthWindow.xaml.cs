@@ -53,6 +53,7 @@ namespace User
                 UserSession.CurrentUser = user;
                 this.DialogResult = true;
                 MessageBox.Show("Вход выполнен успешно!", "Авторизация", MessageBoxButton.OK, MessageBoxImage.Information);
+
                 this.Close();
             }
             else

@@ -25,42 +25,26 @@ namespace Seller
         private int _sellerId = 1;
         private int _productId;
         private int id;
-        private Marketplace.Data.Entities.User? _currentUser;
         private static readonly DbContextOptions<MarketplaceContext> _dbOptions =
             new DbContextOptionsBuilder<MarketplaceContext>()
             .UseSqlServer(@"Server=.\SQLEXPRESS;Database=MarketplaceDb;Trusted_Connection=true;TrustServerCertificate=true;")
             .Options;
 
-        public MainWindow()
+        public MainWindow(int sellerId)
         {
             InitializeComponent();
             _context = new MarketplaceContext(_dbOptions);
             _sellerRepo = new SellerRepository(_context);
-            if (int.TryParse(SellerIdInput.Text, out int parsedId))
-            {
-                _sellerId = parsedId;
-            }
-            else
-            {
-                _sellerId = 1;
-            }
-            _ = LoadSellerDashboard();
-        }
-         // ✅ УБРАЛИ _currentUserEmail
+            _sellerId = sellerId;
 
-        public void SetCurrentUser(Marketplace.Data.Entities.User user)
-        {
-            _currentUser = user;  // ✅ Заполняется!
+            SellerIdInput.Text = sellerId.ToString();
+            SellerIdInput.Visibility = Visibility.Collapsed; 
+
+            
+            _ = LoadSellerDashboard(); 
         }
 
-        private bool IsCurrentUserAdmin()
-        {
-            // ✅ ПРОВЕРЯЕМ Role напрямую!
-            return _currentUser?.Role == Marketplace.Data.Enums.UserRole.admin;
-        }
-
-
-        private async Task LoadSellerDashboard()
+        private async Task LoadSellerDashboard() 
         {
             try
             {
@@ -75,7 +59,7 @@ namespace Seller
                     SellerIdLabel.Text = $"Seller #{_sellerId} - {seller.StoreName}";
                     StatusLabel.Text = "Дашборд загружен!";
                     StatusLabel.Foreground = Brushes.Green;
-
+                    
                 }
                 else
                 {
@@ -107,10 +91,9 @@ namespace Seller
 
                 if (seller != null)
                 {
-
+                  
                     TotalProductsText.Text = seller.Products.Count.ToString();
-
-                    UpdateDashboardFromSeller(seller);
+                    
 
                     // Загружаем таблицу продуктов
                     var products = seller.Products.Select(p => new
@@ -118,16 +101,15 @@ namespace Seller
                         Id = p.Id,
                         Name = p.Name,
                         Brand = p.Brand ?? "",
-                        CategoryName = p.Category,
-                        Price = p.BasePrice,
+                        CategoryName = "Категория", // Загружает из БД
+                        Price = p.Skus.FirstOrDefault()?.Price ?? p.BasePrice,
                         Stock = p.Skus.Sum(s => s.Stock),
                         Status = p.IsActive ? "Активен" : "Неактивен"
                     }).ToList();
 
-                    ProductsDataGrid.ItemsSource = null;
                     ProductsDataGrid.ItemsSource = products;
                     ProductsCountLabel.Text = $"({products.Count})";
-                    SellerIdLabel.Text = $"Seller #{seller.StoreName}";
+                    SellerIdLabel.Text = $"Seller #{sellerId}";
                 }
 
                 StatusLabel.Text = "Готов";
@@ -157,110 +139,31 @@ namespace Seller
                 Revenue = p.BasePrice * 1.5m
             }).ToList();
 
+           
         }
 
-
-        private async void AddProductButton_Click(object sender, RoutedEventArgs e)
+        
+        private void AddProductButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(SellerIdInput.Text, out int currentId))
-            {
-                var addWindow = new AddProductWindow(currentId);
-                if (addWindow.ShowDialog() == true)
-                    await LoadSellerDashboard();
-            }
+            var addWindow = new AddProductWindow(_sellerId);
+            if (addWindow.ShowDialog() == true)
+                LoadSellerDashboard();
         }
 
-        private async void EditProductButton_Click(object sender, RoutedEventArgs e)
+        private void EditProductButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(SellerIdInput.Text, out int currentId))
-            {
-                var editWindow = new EditProductWindow(currentId);
-                if (editWindow.ShowDialog() == true)
-                {
-                    InitializeComponent();
-                    await LoadSellerDashboardAsync(true);
-                }
-            }
+            var editWindow = new EditProductWindow(_sellerId);
+            if (editWindow.ShowDialog() == true)
+                LoadSellerDashboard();
         }
 
-        private async void DeleteProductButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteProductButton_Click(object sender, RoutedEventArgs e)
         {
-            if (int.TryParse(SellerIdInput.Text, out int currentId))
-            {
-                var deleteWindow = new DeleteProductWindow(currentId);
-
-                if (deleteWindow.ShowDialog() == true)
-                {
-                    InitializeComponent();
-                    await LoadSellerDashboardAsync(true);
-                }
-            }
+            var deleteWindow = new DeleteProductWindow(_sellerId);
+            if (deleteWindow.ShowDialog() == true)
+                LoadSellerDashboard();
         }
-
-        private async Task LoadSellerDashboardAsync(bool forceReload = false)
-        {
-            try
-            {
-                StatusLabel.Text = "Загрузка дашборда...";
-                var sellerId = int.Parse(SellerIdInput.Text);
-
-                // принудительное обновление контекста
-                if (forceReload)
-                {
-                    _context.ChangeTracker.Clear();  // Очищаем кэш EF!
-                }
-
-                var sellerRepo = new SellerRepository(_context);
-                var seller = await sellerRepo.GetSellerWithDetailedInfoAsync(sellerId);
-
-                if (seller != null)
-                {
-                    TotalProductsText.Text = seller.Products.Count.ToString();
-
-                    // ПРЯМАЯ перезагрузка метрик
-                    UpdateDashboardFromSeller(seller);
-
-                    // НОВАЯ загрузка продуктов
-                    var products = seller.Products.Select(p => new
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Brand = p.Brand ?? "",
-                        CategoryName = p.Category,
-                        Price = p.BasePrice,
-                        Stock = p.Skus.Sum(s => s.Stock),
-                        Status = p.IsActive ? "Активен" : "Неактивен"
-                    }).ToList();
-
-                    ProductsDataGrid.ItemsSource = null;  // сброс
-                    ProductsDataGrid.ItemsSource = products;
-                    ProductsCountLabel.Text = $"({products.Count})";
-                }
-
-                StatusLabel.Text = "Готов";
-            }
-            catch (Exception ex)
-            {
-                StatusLabel.Text = $"Ошибка: {ex.Message}";
-            }
-        }
-        private void If_seller(object sender, MouseButtonEventArgs e)
-        {
-
-            bool isAdmin = IsCurrentUserAdmin();
-
-            SellerIdInput.IsEnabled = isAdmin;
-
-            if (!isAdmin)
-            {
-                MessageBox.Show("Только администратор!");
-                e.Handled = true;
-                return;
-            }
-
-            SellerIdInput.Focus();
-
-
-        }
+       
+   
     }
 }

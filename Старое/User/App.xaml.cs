@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace Main
+namespace User
 {
     /// <summary>
     /// Interaction logic for App.xaml
